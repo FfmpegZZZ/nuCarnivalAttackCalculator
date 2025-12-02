@@ -1,4 +1,1473 @@
 <!DOCTYPE html>
-<html>
-<meta http-equiv="refresh" content="0;url=https://linecross.github.io/nuCarnivalAttackCalculator/Main.html" />
+<html data-bs-theme="light">
+<head>
+	<title>新世界狂歡傷害計算機</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.33/vue.global.prod.min.js" integrity="sha512-0iutDUhdPATJxtLxUQeakh5i6m0XgfrmLsr+J6ThPkWPDXsjc+55OgmPaRxu0UhgQZ3sWlklQBgDcUZfVhE5iA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dexie/4.0.4/dexie.min.js" integrity="sha512-z7iX1x5lutE3FkgRZf9RBEtnLc6fV7GHg4K/enunqxr5IqelHqmnxu2BWutBEZMypu766DpWQ7qXFCsGvkMYsQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" integrity="sha512-Qlv6VSKh1gDKGoJbnyA5RMXYcvnpIqhO++MhIM2fStMcGT9i2T//tSwYFlcyoRRDcDZ+TYHpH8azBBCyhpSeqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" integrity="sha512-TelkP3PCMJv+viMWynjKcvLsQzx6dJHvIGhfqzFtZKgAjKM1YPqcwzzDEoTc/BHjf43PcPzTQOjuTr4YdE8lNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js" integrity="sha512-7tWCgq9tTYS/QkGVyKrtLpqAoMV9XIUxoou+sPUypsaZx56cYR/qio84fPK9EvJJtKvJEwt7vkn6je5UVzGevw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js" integrity="sha512-qtX0GLM3qX8rxJN1gyDfcnMFFrKvixfoEOwbBib9VafR5vbChV5LeE5wSI/x+IlCkTY5ZFddFDCCfaVJJNnuKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+	<script type="module" src="./build/Constants.js"></script>
+	<script type="module" src="./build/BattleSystem.js"></script>
+	<link rel='stylesheet' href='./res/css/main.css' />
+
+	<link rel="preload" href="./res/img/card-icon/image/char_icons.png" as="image" />
+</head>
+
+<body>
+	<div id='NuCarnivalAttackCalApp'>
+		<div class="container-lg">
+			<div class="row justify-content-center text-center">
+				<div class="row col-lg-11">
+					<div class="col-1"></div>
+					<h3 class="col align-self-center"><a class="title-link" :href="homeUrl">新世界狂歡：傷害計算機</a></h3>
+					<span class="col-1 theme-btn" @click="switchTheme()">
+						<i class="fa-solid fa-circle-half-stroke"></i>
+					</span>
+					
+				</div>
+				<!-- <div class="row col-xs-16 col-md-15 col-lg-9">
+					<div class="alert alert-warning" role="alert">
+						<b>SSR蜜話加成已更新至70%（5%、10%、15%、15%、25%）</b><br/>
+					</div>
+				</div> -->
+			</div>
+
+			
+
+			<div class="modal fade" tabindex="-1" id="cardSelector">
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content w-100 h-100">
+						<div class="modal-header">
+							<h5 class="modal-title">選擇角色</h5>
+							<span class="verticalLine"></span>
+								<div class="py-1 d-flex cardFilter-searchForm">
+									<button type="button" class="btn" :class="cardFilter.searchStrOp == 'AND' ? 'btn-primary' : 'btn-dark'" 
+									@click="cardFilter.searchStrOp = (cardFilter.searchStrOp == 'AND' ? 'OR' : 'AND')">
+										{{cardFilter.searchStrOp}}
+									</button>
+									<input class="form-control mx-3" type="text" id="cardFilter-searchStr" v-model="cardFilter.searchStr" placeholder="搜尋...">
+									<button type="button" class="btn btn-primary" @click="cardFilterSelectNone()">重設</button>
+								</div>	
+							<button type="button" class="btn-close text-reset" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body overflow-hidden">
+							<div class="filter-panel col w-100">
+								<div class="py-1">
+									<h5>稀有度</h5>
+									<template v-for="rarity in FILTERS.rarity">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-rarity" autocomplete="off" :id="'cardFilter-'+rarity" :value="rarity" v-model="cardFilter.rarity">
+											<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+rarity">{{rarity}}</label>
+										</span>
+									</template>
+								</div>
+								<div class="py-1 cardFilter-clazz">
+									<h5>定位</h5>
+									<template v-for="clazz in FILTERS.clazz">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-clazz" :id="'cardFilter-'+clazz" :value="clazz" v-model="cardFilter.clazz">
+											<label class="col-1 mx-2 w-auto" :for="'cardFilter-'+clazz" >
+												<img :src="getFilterPanalIconPath('class', clazz)"/>
+											</label>
+										</span>
+									</template>
+								</div>
+								<div class="py-1 cardFilter-element">
+									<h5>屬性</h5>
+									<template v-for="element in FILTERS.element">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-element" :id="'cardFilter-'+element" :value="element" v-model="cardFilter.element">
+											<label class="col-1 mx-2 w-auto" :for="'cardFilter-'+element" >
+												<img :src="getFilterPanalIconPath('element', element)"/>
+											</label>
+										</span>
+									</template>
+								</div>
+								<div class="py-1">
+									<h5>CD</h5>
+									<template v-for="coolDown in FILTERS.coolDown">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-coolDown" autocomplete="off" :id="'cardFilter-'+coolDown" :value="coolDown" v-model="cardFilter.coolDown">
+											<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+coolDown">{{coolDown}}</label>
+										</span>
+									</template>
+								</div>
+								<div class="py-1 cardFilter-char" :class="this.cardFilter.charDisplayStyle">
+									<h5>角色</h5>
+									<template v-for="char in CHARACTERS">
+										<span v-if="char != ''" :class="'filter-'+getFilterPanelCode('char', char)" >
+											<template v-if="this.cardFilter.charDisplayStyle == 'pixel'">
+												<input type="checkbox" class="btn-check" name="cardFilter-character" :id="'cardFilter-'+char" :value="char" v-model="cardFilter.char">
+												<label class="col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+char">
+													<img :src="getFilterPanalIconPath('char', char)"/>
+													{{char}}
+												</label>
+											</template>
+											<template v-if="this.cardFilter.charDisplayStyle == 'image'">
+												<input type="checkbox" class="btn-check" name="cardFilter-character" :id="'cardFilter-'+char" :value="char" v-model="cardFilter.char">
+												<label class="col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+char">
+													<!-- <img :src="getFilterPanalIconPath('char', char)"/> -->
+													<span class="filter-icon-char-image" :class="'icon-'+getFilterPanelCode('char', char)"></span>
+												</label>
+											</template>
+											<template v-if="this.cardFilter.charDisplayStyle == 'text'">
+												<input type="checkbox" class="btn-check" name="cardFilter-character" :id="'cardFilter-'+char" :value="char" v-model="cardFilter.char">
+												<label class="btn mx-2 my-1 w-auto" :for="'cardFilter-'+char">
+													{{char}}
+												</label>
+											</template>
+										</span>
+									</template>
+								</div>
+								<div class="py-1">
+									<h5>免疫能力</h5>
+									<template v-for="immuneSkill in FILTERS.immuneSkill">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-immuneSkill" :id="'cardFilter-'+immuneSkill" :value="immuneSkill" @click="addToFilterSearch(immuneSkill)" :checked="isFilterChecked(immuneSkill)">
+											<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+immuneSkill">{{immuneSkill}}</label>
+										</span>
+									</template>
+								</div>
+								<div class="py-1">
+									<h5>增傷能力（攻擊）</h5>
+									<template v-for="buffSkill in FILTERS.buffSkill">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-buffSkill" :id="'cardFilter-'+buffSkill" :value="buffSkill" @click="addToFilterSearch(buffSkill)" :checked="isFilterChecked(buffSkill)">
+											<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+buffSkill">{{buffSkill}}</label>
+										</span>
+									</template>
+								</div>
+								<div class="py-1">
+									<h5>增傷能力（治療）</h5>
+									<template v-for="healBuffSkill in FILTERS.healBuffSkill">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-healBuffSkill" :id="'cardFilter-'+healBuffSkill" :value="healBuffSkill" @click="addToFilterSearch(healBuffSkill)" :checked="isFilterChecked(healBuffSkill)">
+											<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+healBuffSkill">{{healBuffSkill}}</label>
+										</span>
+									</template>
+								</div>
+								<div class="py-1">
+									<h5>減傷能力</h5>
+									<template v-for="lessDamageSkill in FILTERS.lessDamageSkill">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-lessDamageSkill" :id="'cardFilter-'+lessDamageSkill" :value="lessDamageSkill" @click="addToFilterSearch(lessDamageSkill)" :checked="isFilterChecked(lessDamageSkill)">
+											<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+lessDamageSkill">{{lessDamageSkill}}</label>
+										</span>
+									</template>
+								</div>
+								<div class="py-1">
+									<h5>其他能力</h5>
+									<template v-for="otherSkill in FILTERS.otherSkill">
+										<span>
+											<input type="checkbox" class="btn-check" name="cardFilter-otherSkill" :id="'cardFilter-'+otherSkill" :value="otherSkill" @click="addToFilterSearch(otherSkill)" :checked="isFilterChecked(otherSkill)">
+											<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardFilter-'+otherSkill">{{otherSkill}}</label>
+										</span>
+									</template>
+								</div>
+							</div>
+						
+							<div class="card-panel col overflow-auto w-100" >
+								<template v-for="card in getFilteredCards">
+									<span class="card-block" data-bs-dismiss="modal" :data-cardname="card[0]" @click="selectCard(card[0])">
+										<div class="card-image-div">
+											<img :src="getCardImagePath(card[1])" loading="lazy" @error="loadNoCardImage" class="card-image">
+											<img :src="getCardIconPath(card[1], 'element')" class="card-icon-element" />
+											<img :src="getCardIconPath(card[1], 'class')" class="card-icon-class" />
+											<img :src="getCardIconPath(card[1], 'rarity')" class="card-icon-rarity" />
+										</div>
+										<div class="card-name">{{card[0]}}</div>
+									</span>
+								</template>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" tabindex="-1" id="damageRecordModal" @click="damageRecordPanel.editElement='x'">
+
+				<div class="toast-container top-50 start-50 translate-middle">
+					<div class="toast hide" role="alert" id="deleteConfirmToast" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+						<div class="toast-header">
+							<h5>全部刪除</h5>
+						</div>
+					  <div class="toast-body fs-6">
+						是否刪除全部記錄？
+						<div class="mt-2 pt-2 border-top">
+						  <button type="button" class="btn me-2 btn-primary" data-bs-dismiss="toast" @click="deleteAllDamageRecord()">確定</button>
+						  <button type="button" class="btn me-2 btn-secondary" data-bs-dismiss="toast">取消</button>
+						</div>
+					  </div>
+					</div>
+				</div>
+
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content w-100 h-100">
+						<div class="modal-header">
+							<h5 class="modal-title">隊伍記錄</h5>
+							<span class="badge text-bg-warning">僅供簡單記錄</span>
+							<button type="button" class="btn-close text-reset" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body w-100 overflow-hidden">
+							<div class="filter-panel">
+								<div class="py-1 px-1 d-flex">
+									<select class="form-select col-auto w-auto" v-model="damageRecordPanel.cardImgSize">
+										<option value="big">角色圖：較大</option>
+										<option value="normal">角色圖：一般</option>
+										<option value="small">角色圖：較小</option>
+										<option value="none">角色圖：無</option>
+									</select>
+									<span class="verticalLine"></span>
+									<div>
+										<button type="button" class="btn btn-primary" @click="damageRecordFilterSelectNone()">重設</button>
+									</div>
+									<span>
+										<input type="checkbox" class="btn-check heart-checkbox" id="recordPanel-searchFav" v-model="damageRecordPanel.searchFav">
+										<label class="col-1 mx-2 w-auto" for="recordPanel-searchFav">
+											<i v-if="damageRecordPanel.searchFav" class="fa-solid fa-heart"></i>
+											<i v-else="damageRecordPanel.searchFav" class="fa-regular fa-heart"></i>
+										</label>
+									</span>
+									<input class="form-control search-number" type="number" v-model="damageRecordPanel.searchTurn" placeholder="回合數">
+									<input class="form-control search-text" type="text" v-model="damageRecordPanel.searchTeamName" placeholder="搜尋隊伍...">
+									<input class="form-control search-text" type="text" v-model="damageRecordPanel.searchCard" placeholder="搜尋卡片...">
+								</div>
+							</div>
+							<div class="card-panel row overflow-auto w-100" >
+								<table id="damageRecordTable" class="table resultTable">
+									<thead>
+										<tr>
+											<th class="col-isFav" scope="col" @click="damageSort('isFav')">
+												<i v-show="damageRecordPanel.sortBy=='isFav'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th scope="col" @click="damageSort('teamName')">
+												隊伍名稱
+												<i v-show="damageRecordPanel.sortBy=='teamName'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th class="col-turn" scope="col" @click="damageSort('turns')">
+												回合
+												<i v-show="damageRecordPanel.sortBy=='turns'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th scope="col" @click="damageSort('card1')">
+												第一位
+												<i v-show="damageRecordPanel.sortBy=='card1'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th scope="col" @click="damageSort('card2')">
+												第二位
+												<i v-show="damageRecordPanel.sortBy=='card2'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th scope="col" @click="damageSort('card3')">
+												第三位
+												<i v-show="damageRecordPanel.sortBy=='card3'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th scope="col" @click="damageSort('card4')">
+												第四位
+												<i v-if="damageRecordPanel.sortBy=='card4'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th scope="col" @click="damageSort('card5')">
+												第五位
+												<i v-show="damageRecordPanel.sortBy=='card5'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th class="col-total" scope="col" @click="damageSort('totalDamage')">
+												隊伍總傷害
+												<i v-show="damageRecordPanel.sortBy=='totalDamage'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+											<th class="col-action" scope="col" @click="damageSort('id')">
+												<i v-show="damageRecordPanel.sortBy=='id'" class="fa-solid" :class="damageRecordPanel.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<template v-for="record in getDamageRecordsByPage">
+											<tr>
+												<td rowspan="2">
+													<span>
+														<input type="checkbox" class="btn-check heart-checkbox" :id="'recordPanel-isFav-' + record.id" name="isFavTeam" :value="record.isFav" v-model="record.isFav" @change="updateDamageRecord(record)">
+														<label class="col-1 mx-2 w-auto" :for="'recordPanel-isFav-' + record.id">
+															<i v-if="record.isFav" class="fa-solid fa-heart"></i>
+															<i v-else="record.isFav" class="fa-regular fa-heart"></i>
+														</label>
+													</span>
+												</td>
+												<td rowspan="2" class="col-teamname" @click.stop="damageRecordPanel.editElement='teamName_'+record.id">
+													<textarea v-if="damageRecordPanel.editElement=='teamName_'+record.id" class="form-control" v-model="record.teamName" @change="updateDamageRecord(record)"></textarea>
+													<template v-else v-for="(str, idx) in generateTeamNameHtml(record.teamName)" :key="str">
+														<span v-if="str.startsWith('#')" class="tag" @click.stop="!isEditTeam && addToRecordSearch('searchTeamName', str)">{{str}}</span>
+														<template v-else-if="str=='<br>'">
+															<br/>
+														</template>
+														<template v-else>
+															<template v-if="idx==0"><h5><b>{{str}}</b></h5></template>
+															<template v-else>{{str}}</template>
+														</template>
+													</template>
+												</td>
+												<td rowspan="2" class="col-turn" @click="!isEditTeam && addToRecordSearch('searchTurn', record.turns)">{{ record.turns }}</td>
+												<template v-for="card in record.cards" :key="card" >
+													<td class="card-cell">
+														<div v-if="card != null" :set="cardData = getCardData(card.name)" class="card-block" :class="damageRecordPanel.cardImgSize" @click="!isEditTeam && addToRecordSearch('searchCard', card.name)">
+															<div v-show="damageRecordPanel.cardImgSize != 'none'" class="card-image-div">
+																<img :src="getCardImagePath(cardData)" @error="loadNoCardImage" class="card-image">
+																<img :src="getCardIconPath(cardData, 'element')" class="card-icon-element" />
+																<img :src="getCardIconPath(cardData, 'class')" class="card-icon-class" />
+																<div class="card-icon-star-container">
+																	<template v-for="star in card.star">
+																		<img :src="getCardIconPath(cardData, 'star')" class="card-icon-star" />
+																	</template>
+																</div>
+																<img :src="getCardIconPath(cardData, 'rarity')" class="card-icon-rarity" />
+															</div>
+															<div class="card-name">{{card.name}}</div>
+														</div>
+													</td>
+												</template>
+												<td rowspan="2">{{ record.totalDamage }}</td>
+												<td rowspan="2">
+													<button v-show="damageRecordPanel.manageMode == 'normal'" type="button" class="btn btn-primary" @click="loadDamageRecord(record)" data-bs-dismiss="modal">載入</button>
+													<button v-show="damageRecordPanel.manageMode == 'delete'" type="button" class="btn btn-danger" @click="deleteDamageRecord(record.id)">刪除</button>
+												</td>
+											</tr>
+											<tr>
+												<template v-for="card in record.cards" :key="card">
+													<td>
+														<div v-if="card != null">{{ card.dmg }}</div>
+													</td>
+												</template>
+											</tr>
+										</template>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" @click="copyTableImage('damageRecordTable')">
+								表格截圖
+							</button>
+							｜
+							<div>
+								<button v-show="damageRecordPanel.manageMode == 'delete'" type="button" class="btn btn-danger mx-2" @click="showDeleteConfirmToast()" >
+									全部刪除
+								</button>
+								<button type="button" class="btn mx-2" :class="damageRecordPanel.manageMode == 'delete' ? 'btn-danger' : 'btn-primary'" @click="damageRecordSwitchManageMode()">
+									{{damageRecordPanel.manageMode == 'delete' ? '不刪了' : '刪除模式'}}
+								</button>
+							</div>
+							<span class="verticalLine"></span>
+							<div>
+								<input type="file" id="importDamageRecordBtn" @change="importDamageRecord($event)" accept="application/json"  style="display: none" />
+								<label class="btn btn-primary" for="importDamageRecordBtn">匯入</label>
+							</div>
+							<div>
+								<button type="button" class="btn btn-primary" @click="exportDamageRecord()">匯出</button>
+							</div>
+							<span class="verticalLine"></span>
+							<div>
+								<nav aria-label="">
+									<ul class="pagination my-auto">
+									  <li class="page-item" :class="damageRecordPanel.currentPage == 1 ? 'disabled' : ''">
+										<a class="page-link" href="#" @click="damageRecordPanel.currentPage -= 1; refreshDamageRecordPanelUI()">‹</a>
+									  </li>
+									  <template v-for="pageIdx in getDamageRecordsPageCount">
+										<li class="page-item" :class="damageRecordPanel.currentPage == pageIdx ? 'active' : ''"><a class="page-link" href="#" @click="damageRecordPanel.currentPage = pageIdx; refreshDamageRecordPanelUI()">{{ pageIdx }}</a></li>
+									  </template>
+									  <li class="page-item" :class="damageRecordPanel.currentPage == getDamageRecordsPageCount ? 'disabled' : ''">
+										<a class="page-link" href="#" @click="damageRecordPanel.currentPage += 1; refreshDamageRecordPanelUI()">›</a>
+									  </li>
+									</ul>
+								  </nav>
+							</div>
+							<span class="verticalLine"></span>
+							<div>
+								{{ '第 ' + ((damageRecordPanel.currentPage-1)*damageRecordPanel.pageMaxCount+1) + ' - ' 
+								+ ((damageRecordPanel.currentPage-1)*damageRecordPanel.pageMaxCount + (damageRecordPanel.currentPage == getDamageRecordsPageCount && getDamageRecords.length % damageRecordPanel.pageMaxCount > 0 ? getDamageRecords.length % damageRecordPanel.pageMaxCount : damageRecordPanel.pageMaxCount)) + ' 則' }}
+							</div>
+							<span class="verticalLine"></span>
+							<span>每頁顯示</span>
+							<div>
+								<select class="col-auto form-control wide-input form-select" v-model.number="damageRecordPanel.pageMaxCount">
+									<option value="10">10</option>
+									<option value="20">20</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+								</select>
+							</div>
+							<span class="verticalLine"></span>
+							<div>
+								{{ '記錄數量：' + getDamageRecords.length }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="offcanvas offcanvas-end" data-bs-scroll="false" data-bs-backdrop="true" tabindex="-1" id="cardDetailPanel" aria-labelledby="cardDetailPanelLabel">
+				<div class="offcanvas-header">
+					<h4 class="offcanvas-title" id="cardDetailPanelLabel">{{ cardDetailCardName }} - 詳細資料</h4>
+					<span class="badge text-bg-warning">實驗性功能</span>
+					<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+				</div>
+				<div  v-if="cardDetailCardName != ''" class="offcanvas-body">
+					<div class="alert alert-warning" role="alert">
+						<div>
+							角色技能是按照計算機的功能需求調整刪減，僅供參考
+						</div>
+						<div>
+							例：沒有「被攻擊時」「被治療時」等能力敘述
+						</div>
+					</div>
+					<div class="row align-items-center">
+						<div class="col icon text-end" @click="showCardDetail(getPrevCardname(cardDetailCardName))"><i class="fa-solid fa-caret-left"></i></div>
+						<div class="col card-block">
+							<div class="card-image-div">
+								<img :src="getCardImagePath(cardDetailCardData)" @error="loadNoCardImage" class="card-image">
+								<img :src="getCardIconPath(cardDetailCardData, 'element')" class="card-icon-element" />
+								<img :src="getCardIconPath(cardDetailCardData, 'class')" class="card-icon-class" />
+								<img :src="getCardIconPath(cardDetailCardData, 'rarity')" class="card-icon-rarity" />
+							</div>
+						</div>
+						<div class="col icon text-start" @click="showCardDetail(getNextCardname(cardDetailCardName))"><i class="fa-solid fa-caret-right"></i></div>
+					</div>
+					<div class="row">HP：{{cardDetailCardData.baseHp}} </div>
+					<div class="row">ATK：{{cardDetailCardData.baseAtk}} </div>
+					<div class="row">潛力類型：{{cardDetailCardData.potType}} </div>
+					<div class="row">CD：{{cardDetailCardData.coolDown}} </div>
+					<hr />
+					<div class="row">普攻：{{getRuleAsString(cardDetailCardData.attackRule)}} </div>
+					<div class="row">技能 Lv1：{{getRuleAsString(cardDetailCardData.skillLv1Rule)}} </div>
+					<div class="row">技能 Lv2：{{getRuleAsString(cardDetailCardData.skillLv2Rule)}} </div>
+					<div class="row">技能 Lv3：{{getRuleAsString(cardDetailCardData.skillLv3Rule)}} </div>
+					<hr />
+					<div class="row">3星被動：{{getRuleAsString(cardDetailCardData.star3Rule)}} </div>
+					<div class="row">5星被動：{{getRuleAsString(cardDetailCardData.star5Rule)}} </div>
+					<div class="row">潛{{(cardDetailCardData.rarity == 'SSR' || cardDetailCardData.rarity == 'SR') ? 6 : 3}}被動：{{getRuleAsString(cardDetailCardData.pot6Rule)}} </div>
+					<div class="row">潛{{(cardDetailCardData.rarity == 'SSR' || cardDetailCardData.rarity == 'SR') ? 12 : 6}}被動：{{getRuleAsString(cardDetailCardData.pot12Rule)}} </div>
+				</div>
+			</div>
+
+			<div class="toast-container position-fixed top-0 start-50 translate-middle-x ">
+				<div id="msgToast" class="toast align-items-center" data-bs-delay="1800" role="alert" aria-live="assertive" aria-atomic="true">
+					<div class="d-flex fs-5 border-0 rounded" :class="toastStatus">
+						<div class="toast-body">
+							{{toastMessage}}
+						</div>
+						<button type="button" class="btn-close me-2 m-auto btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+					</div>
+				</div>
+			</div>
+
+			<div v-if="userInput.isAdvanceMode" class="row justify-content-center mb-2">
+				<div class="col-xs-12 col-md-12 col-lg-11">
+					<ul class="nav nav-tabs">
+						<li class="nav-item">
+							<a :class="'nav-link ' + (tab == 'CAL' ? 'active' : '')" href="#" @click="switchTab('CAL')">計算機</a>
+						</li>
+						<li class="nav-item">
+							<a :class="'nav-link ' + (tab == 'SORT' ? 'active' : '')" href="#" @click="switchTab('SORT')">排行表</a>
+						</li>
+						<li class="nav-item">
+							<a :class="'nav-link ' + (tab == 'JSON' ? 'active' : '')" href="#" @click="switchTab('JSON')">匯入Json</a>
+						</li>
+						<li class="nav-item">
+							<a :class="'nav-link ' + (tab == 'SETTING' ? 'active' : '')" href="#" @click="switchTab('SETTING')">設定</a>
+						</li>
+						<li class="nav-item">
+							<a :class="'nav-link ' + (tab == 'LOGS' ? 'active' : '')" href="#" @click="switchTab('LOGS')">已知問題</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div v-if="tab == 'CAL'" class="row justify-content-center mb-2">
+				<div class="col-xs-12 col-md-12 col-lg-11">
+					<div class="row">
+						<h5 class="collapse-header" data-bs-toggle="collapse" data-bs-target="#section-basicSetup" aria-expanded="false" aria-controls="section-basicSetup">
+							基本設定
+						</h5>
+						
+						<div id="section-basicSetup" class="form-group col-xs-12 col-md-12 col-lg-11 collapse">
+							<span class="form-check-inline">
+								<label for="inputIsAdvanceMode">進階顯示</label><br/>
+								<input class="form-check-input" type="checkbox" id="inputIsAdvanceMode" :checked="userInput.isAdvanceMode" v-model="userInput.isAdvanceMode">
+							</span>
+
+							<span class="verticalLine"></span>
+
+							<div v-if="userInput.isAdvanceMode" class="form-check-inline">
+								<label for="inputIsModifyCardVal">手動輸入數值</label><br/>
+								<input class="form-check-input" type="checkbox" id="inputIsModifyCardVal" :checked="userInput.isModifyCardVal" v-model="userInput.isModifyCardVal">
+							</div>
+							
+							<span class="verticalLine"></span>
+							
+							<span class="form-check-inline">
+								<label for="inputDefaultStar">預設星數</label>
+								<select id="inputDefaultStar" class="form-select" v-model="userInput.defaultStar">
+									<option v-for="(name, value) in DEFAULT_STAR" :value="value">{{ name }}</option>
+								</select>
+							</span>
+						</div>
+					</div>
+
+					<div class="row">
+						<h5 class="collapse-header" data-bs-toggle="collapse" data-bs-target="#section-teamSetup" aria-expanded="false" aria-controls="section-teamSetup">
+							隊伍設定
+						</h5>
+						<div id="section-teamSetup" class="collapse">
+						<div id="charInputList" class="row" :key="userInput.updateKey">
+							<div class="col charItem" v-for="(cardname, idx) in userInput.cardname" :data-id="idx" style="vertical-align: top;">
+								<div class="row mt-2 mb-2 form-group">
+									<div class="drag-handler">
+										<div class="drag-bar-container">
+											<div class="drag-bar"></div>
+											<i class="fa-solid fa-up-down-left-right"></i>
+										</div>
+										<div class="form-check text-center">
+											<label>第 {{ idx+1 }} 位</label>
+										</div>
+									</div>
+									<button v-if="cardname == ''" class="btn btn-outline-primary" type="button" data-bs-target="#cardSelector" aria-controls="cardSelector" @click="openCardSelector(idx)">
+										選擇角色...
+									</button>
+									<span v-else class="card-block" :data-cardname="cardname" data-bs-target="#cardSelector" aria-controls="cardSelector" @click="openCardSelector(idx)">
+										<div class="card-image-div">
+											<img :src="getCardImagePath(cards[idx])" @error="loadNoCardImage" class="card-image">
+											<img :src="getCardIconPath(cards[idx], 'element')" class="card-icon-element" />
+											<img :src="getCardIconPath(cards[idx], 'class')" class="card-icon-class" />
+											<div class="card-icon-star-container">
+												<template v-for="star in cards[idx].star">
+													<img :src="getCardIconPath(cards[idx], 'star')" class="card-icon-star" />
+												</template>
+											</div>
+											<img :src="getCardIconPath(cards[idx], 'rarity')" class="card-icon-rarity" />
+											<span class="fa-stack card-icon-btn card-icon-info-btn" data-bs-target="#cardDetailPanel" aria-controls="cardDetailPanel" @click.stop="showCardDetail(cardname)">
+												<i class="fa-solid fa-square fa-stack-2x"></i>
+												<i class="fa-solid fa-info fa-stack-1x" ></i>
+											</span>
+											<span class="fa-stack card-icon-btn card-icon-remove-btn" @click.stop="removeCard(idx)">
+												<i class="fa-solid fa-square fa-stack-2x"></i>
+												<i class="fa-solid fa-xmark fa-stack-1x" ></i>
+											</span>
+										</div>
+										<div class="card-name">{{cardname}}</div>
+									</span>
+								</div>
+
+								<div class="row mt-2 mb-2 card-data" v-if="cards[idx] != null">
+									<div class="row">
+										<!-- <div class="charStar">
+											<template v-for="star in STARS" :key="star">
+												
+												<input type="radio" name="charStar" :value="5-star" :id="'inputCard-star'+star+'-'+(idx+1)" v-model="cards[idx].star">
+												<label :for="'inputCard-star'+star+'-'+(idx+1)">☆</label>
+											</template>
+										</div> -->
+										<label class="col-auto" :for="'inputCard-star-'+(idx+1)">星數</label>
+										<select :id="'inputCard-star-'+(idx+1)" class="col-auto form-control" v-model="cards[idx].star">
+											<option v-for="star in STARS" :value="star">{{ star }}</option>
+										</select>
+									</div>
+									<div v-if="userInput.isAdvanceMode" class="row">
+										<label class="col-auto" :for="'inputCard-pot-'+(idx+1)">潛力</label>
+										<select :id="'inputCard-pot-'+(idx+1)" class="col-auto form-control" v-model="cards[idx].potential">
+											<option v-for="pot in POT_SELECT" :value="pot">{{ pot }}</option>
+										</select>
+									</div>
+									<div v-if="userInput.isAdvanceMode" class="row">
+										<label class="col-auto">等級</label>
+										<input type="text" inputmode="numeric" class="col-auto form-control" v-model="cards[idx].level" ></input>
+									</div>
+									<div v-if="userInput.isAdvanceMode" class="row">
+										<label class="col-auto">HP</label>
+										<input v-if="this.userInput.isModifyCardVal" type="text" inputmode="numeric" class="col-auto form-control" v-model="cards[idx].hp" ></input>
+										<input v-else type="text" inputmode="numeric" class="col-auto form-control" :value="cards[idx].getHp()" disabled="true"></input>
+									</div>
+									<div v-if="userInput.isAdvanceMode" class="row">
+										<label class="col-auto">ATK</label>
+										<input v-if="this.userInput.isModifyCardVal" type="text" inputmode="numeric" class="col-auto form-control" v-model="cards[idx].atk"></input>
+										<input v-else type="text" inputmode="numeric" class="col-auto form-control" :value="cards[idx].getAtk()" disabled="true"></input>
+									</div>
+									<div v-if="userInput.isAdvanceMode" class="row">
+										<label class="col-auto">戰力值</label>
+										<input type="text" inputmode="numeric" class="col-auto form-control" :value="cards[idx].getBp()" disabled="true"></input>
+									</div>
+
+									<div class="row">
+										<label class="col-auto" :for="'inputCard-currentHp-'+(idx+1)">當前血量</label>
+										<select :id="'inputCard-currentHp-'+(idx+1)" class="col-auto form-control" v-model="cards[idx].currentHp" :disabled="userInput.isAllowHpCond!=HP_STATUS.hpPercent">
+											<option v-for="j in 10" :value="j*10">{{ j*10 }}%</option>
+										</select>
+									</div>
+
+									<div class="row">
+										<label class="col-auto" :for="'inputCard-order-'+(idx+1)">行動順序</label>
+										<select :id="'inputCard-order-'+(idx+1)" class="col-auto form-control"  v-model="userInput.cardActionOrder[idx]">
+											<option v-for="order in 5" :value="order">{{ order }}</option>
+										</select>
+									</div>
+
+									<div class="row">
+										<label class="col-auto" :for="'inputCard-actionPatten-'+(idx+1)">行動模式</label>
+										<select :id="'inputCard-actionPatten-'+(idx+1)" class="col-auto form-control wide-input form-select"  v-model="userInput.cardActionPattern[idx]">
+											<option v-for="action in ACTION_PATTERN" :value="action">{{ action }}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						</div>
+					</div>
+					<div v-if="userInput.isAdvanceMode" class="row">
+						<h5 class="collapse-header" data-bs-toggle="collapse" data-bs-target="#section-userGlobalQuickSetup" aria-expanded="true" aria-controls="section-userGlobalQuickSetup">
+							全員快速設定
+						</h5>
+						
+						<div id="section-userGlobalQuickSetup" class="form-group col-xs-12 col-md-12 col-lg-11 collapse show">
+							<div class="form-check-inline" style="min-width:150px;">
+								<label class="col-auto">潛力</label>
+								<select id="inputCard-global-pot" class="col-auto form-control" v-model="userGlobalInput.cardPot">
+									<option v-for="pot in POT_SELECT" :value="pot">{{ pot }}</option>
+								</select>
+							</div>
+
+							<div class="form-check-inline" style="min-width:150px;">
+								<label class="col-auto">行動模式</label>
+								<select id="inputCard-global-actionPatten" class="col-auto form-control wide-input form-select" v-model="userGlobalInput.cardActionPattern">
+									<option v-for="action in ACTION_PATTERN" :value="action">{{ action }}</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<hr>
+					<div class="row mt-2 mb-2">
+						<div v-if="userInput.isAdvanceMode && hasActiveEnemy()" class="form-group mb-3 col-lg-11">
+							<span class="form-check-inline">
+								<h5><label for="inputEnemyName">選擇敵人</label> <span class="badge text-bg-warning">實驗性功能</span> </h5><br/>
+								<select id="inputEnemyName" class="form-select" v-model="userInput.enemyName">
+									<option v-for="enemy in getEnemyNames()" :value="enemy">{{ enemy }}</option>
+								</select>
+							</span>
+							
+							<span v-if="userInput.enemyCard != null && userInput.enemyCard.hp != null" class="form-check-inline">
+								<span class="verticalLine"></span>
+								敵人血量：{{ userInput.enemyCard.hp }}
+							</span>
+							<span class="verticalLine"></span>
+							<span class="form-check-inline">
+								<button type="button" class="btn btn-primary" @click="loadCurrentEnemyJson">檢視敵人json</button>
+							</span>
+							<div v-if="userInput.enemyCard != null && userInput.enemyCard.description != null" class="enemyDescription">
+								<div class="title">機制說明</div>
+								<div class="desc"><pre>{{ userInput.enemyCard.description }}</pre></div>
+							</div>
+						</div>
+
+						<div class="form-group mb-3 col-lg-11">
+							<span class="form-check-inline">
+								<label for="inputIsDisplayTurnTotal">顯示回合輸出</label><br/>
+								<input class="form-check-input" type="checkbox" id="inputIsDisplayTurnTotal" :checked="userInput.isDisplayTurnTotal" v-model="userInput.isDisplayTurnTotal">
+							</span>
+							<span class="form-check-inline">
+								<label for="inputIsCalcEnemyDebuff">計算敵方易傷</label><br/>
+								<input class="form-check-input" type="checkbox" id="inputIsCalcEnemyDebuff" :checked="userInput.isCalcEnemyDebuff" v-model="userInput.isCalcEnemyDebuff">
+							</span>
+							<span class="form-check-inline">
+								<label for="inputEnemyEle">敵人屬性</label>
+								<select id="inputEnemyEle" class="form-select" v-model="userInput.enemyElement" :disabled="!userInput.isCalcEnemyDebuff">
+									<option v-for="element in ELEMENTS" :value="element">{{ element }}</option>
+								</select>
+							</span>
+
+							<span class="verticalLine"></span>
+
+							<span v-if="userInput.isAdvanceMode" class="form-check-inline">
+								<label for="inputIsAllowHpCond">血量條件</label><br/>
+								<select id="inputEnemyEle" class="form-select" v-model="userInput.isAllowHpCond">
+									<option v-for="hpCondition in HP_STATUS" :value="hpCondition">{{ hpCondition }}</option>
+								</select>
+								<!-- <input class="form-check-input" type="checkbox" id="inputIsAllowHpCond" :checked="userInput.isAllowHpCond" v-model="userInput.isAllowHpCond"> -->
+							</span>
+
+							<span class="verticalLine"></span>
+
+							<div v-if="userInput.isAdvanceMode" class="form-check-inline">
+								<label for="inputCounterAttackMode">反擊模式</label><br/>
+								<select id="inputCounterAttackMode" class="col-auto form-control wide-input form-select" v-model="userInput.counterAttackMode">
+									<option v-for="mode in COUNTER_ATTACK_MODE" :value="mode">{{ mode }}</option>
+								</select>
+							</div>
+
+							<div v-if="userInput.isAdvanceMode" class="form-check-inline">
+								<label for="inputCounterAttackMax">反擊次數</label><br/>
+								<input class="form-control" type="text" inputmode="numeric" id="inputCounterAttackMax" v-model="userInput.maxCounterAttack">
+							</div>
+						</div>
+
+						<div class="form-group mb-3 col-lg-11">
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-printmode1" value="All" v-model="userInput.printOutputMode" />
+								<label class="form-check-label no-select" for="input-printmode1">全部</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-printmode2" value="OnlyDamage" v-model="userInput.printOutputMode" />
+								<label class="form-check-label no-select" for="input-printmode2">傷害</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-printmode3" value="OnlyAttack" v-model="userInput.printOutputMode" />
+								<label class="form-check-label no-select" for="input-printmode3">攻擊</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-printmode4" value="OnlyPoison" v-model="userInput.printOutputMode" />
+								<label class="form-check-label no-select" for="input-printmode4">持續傷害</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-printmode5" value="OnlySupport" v-model="userInput.printOutputMode" />
+								<label class="form-check-label no-select" for="input-printmode5">輔助</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-printmode6" value="OnlyHeal" v-model="userInput.printOutputMode" />
+								<label class="form-check-label no-select" for="input-printmode6">補量</label>
+							</div>
+						</div>
+
+						<div class="row">
+							<span class="form-check-inline col-3">
+								<label for="inputEnemyEle">限制等級</label>
+								<select id="inputEnemyEle" class="form-select" v-model="userInput.limitLevel">
+									<option v-for="level in LEVEL_SELECT" :value="level">{{ level == -1 ? '無限制' : level }}</option>
+								</select>
+							</span>
+						</div>
+
+						<div class="row">
+							<div class="form-group mb-3 col-lg-3">
+								<label class="col-auto">總戰力值：{{getTeamBattlePower}}</label>
+							</div>
+							<div class="form-group mb-3 col-lg-9 text-end">
+								<template v-if="isEditCustomOrderMode">
+									<button type="button" class="btn btn-primary me-3" @click="isEditCustomOrderMode = false">結束編輯</button>
+									<button type="button" class="btn btn-danger me-3" @click="resetCardTurnActionOrder">重設</button>
+								</template>
+								<template v-if="userInput.isAdvanceMode && !isEditCustomOrderMode">
+									<div class="form-check-inline dropdown">
+										<button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+										更多功能
+										</button>
+										<ul class="dropdown-menu">
+										<li v-if="userInput.isShowTurns && battle != null"><a class="dropdown-item" data-bs-target="#actionOrderDialog" aria-controls="actionOrderDialog" @click="isEditCustomOrderMode = true">自訂行動順序</a></li>
+										<li><a class="dropdown-item" @click="copyUrlToClipboard(teamShareURL)">複製網址</a></li>
+										<li><a class="dropdown-item" @click="copyTableImage('battleTurnTable')">表格截圖</a></li>
+										</ul>
+									</div>
+									｜
+								</template>
+								<div class="form-check-inline">
+									<input class="form-control" type="text" inputmode="text" placeholder="隊伍名稱..." v-model="teamName">
+								</div>
+								<button type="button" class="btn btn-primary me-3" @click="addDamageRecord()">新增</button>
+								<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#damageRecordModal" aria-controls="damageRecordModal" @click="loadRecordsFromDB">
+									隊伍記錄
+								</button>
+							</div>
+						</div>
+
+						<div class="table-responsive" >
+							<table id="battleTurnTable" class="table resultTable" :key="userInput.updateKey">
+								<tbody>
+									<tr class="table-header">
+										<th scope="col" class="col-1">
+											<div>
+												<input class="form-control d-inline-block inputTurn" type="text" inputmode="numeric" id="inputTurn" v-model="userInput.turns">
+											</div>
+											<div>回合</div>
+											<div>
+												<input class="form-check-input d-inline-block" type="checkbox" id="inputIsShowTurns" :checked="userInput.isShowTurns" v-model="userInput.isShowTurns">
+											</div>
+										</th>
+										<template v-for="(name, idx) in userInput.cardname" :key="name">
+											<th :data-id="name" scope="col" :class="'charItem col-1'+ getThNameClass(name) "
+												>
+												<button v-if="userInput.cardname[idx] == ''" class="btn btn-outline-primary" type="button" data-bs-target="#cardSelector" aria-controls="cardSelector" @click="openCardSelector(idx)">
+													選擇角色...
+												</button>
+												<template v-else>
+												<div :class="'card-block' + (userInput.isCardEnabled[idx] ? '' : ' disabled')" :data-cardname="userInput.cardname[idx]" data-bs-target="#cardSelector" aria-controls="cardSelector" @click="openCardSelector(idx)">
+													<div class="card-image-div">
+														<img :src="getCardImagePath(cards[idx])" @error="loadNoCardImage" class="card-image">
+														<img :src="getCardIconPath(cards[idx], 'element')" class="card-icon-element" />
+														<img :src="getCardIconPath(cards[idx], 'class')" class="card-icon-class" />
+														<div class="card-icon-star-container">
+															<template v-for="star in cards[idx].star">
+																<img :src="getCardIconPath(cards[idx], 'star')" class="card-icon-star" />
+															</template>
+														</div>
+														<img :src="getCardIconPath(cards[idx], 'rarity')" class="card-icon-rarity" />
+														<span class="fa-stack card-icon-btn card-icon-move-btn" @click.stop>
+															<i class="fa-solid fa-square fa-stack-2x"></i>
+															<i class="fa-solid fa-up-down-left-right fa-stack-1x" ></i>
+														</span>
+														<span class="fa-stack card-icon-btn card-icon-info-btn" data-bs-target="#cardDetailPanel" aria-controls="cardDetailPanel" @click.stop="showCardDetail(userInput.cardname[idx])">
+															<i class="fa-solid fa-square fa-stack-2x"></i>
+															<i class="fa-solid fa-info fa-stack-1x" ></i>
+														</span>
+														<span class="fa-stack card-icon-btn card-icon-remove-btn" @click.stop="removeCard(idx)">
+															<i class="fa-solid fa-square fa-stack-2x"></i>
+															<i class="fa-solid fa-xmark fa-stack-1x" ></i>
+														</span>
+													</div>
+													<div class="card-name">{{userInput.cardname[idx]}}</div>
+												</div>
+												<div>
+												<div data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top" data-bs-html="true" 
+												:data-bs-content="getPassiveRuleSummary(name)">
+													<div>
+														<div v-if="userInput.isCardEnabled[idx]" class="cardHp">{{ getCardActualHp(userInput.cardname[idx]) }} <template v-if="getCardHpUp(userInput.cardname[idx]) > 0">（+{{getCardHpUp(userInput.cardname[idx])}}%）</template></div>
+														<input class="form-check-input" type="checkbox" :id="'inputIsCardEnabled-' + idx" :checked="userInput.isCardEnabled[idx]" v-model="userInput.isCardEnabled[idx]">&nbsp;
+													</div>
+												</div>
+												<div v-if="userInput.isCardEnabled[idx]" class="fa-stack card-order-icon dropdown d-inline-block">
+													<span data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="0,20">
+														<span class="fa fa-solid fa-flag fa-stack-2x"></span>
+														<span class="fa-stack-1x">{{ userInput.cardActionOrder[idx] }}</span>
+													</span>
+													<ul class="dropdown-menu">
+														<li><a class="dropdown-item text-center">行動順序</a></li>
+														<li><hr class="dropdown-divider"></li>
+														<li v-for="order in 5"><a class="dropdown-item text-center" @click="userInput.cardActionOrder[idx] = order">{{ order }}</a></li>
+													</ul>
+												</div>
+												</div>
+											</template>
+											</th>
+										</template>
+										<th v-if="userInput.isDisplayTurnTotal" scope="col" class="charItem col-1">{{ userInput.printOutputMode == 'All' ? '回合總傷害' : '回合總數值' }}</th>
+									</tr>
+									<template v-if="userInput.isShowTurns && battle != null">
+										<tr v-for="turn in userInput.turns">
+											<td v-if="userInput.enemyCard != null" scope="row" class="col-1" :class="getTurnClass(turn)" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="top" data-bs-html="true" 
+											:data-bs-content="getTurnPopMessage(turn)" @click="changeAllAttackType(turn)">
+												{{ turn }}
+											</td>
+											<td v-else scope="row" class="col-1" @click="changeAllAttackType(turn)">
+												{{ turn }}
+											</td>
+											
+											<template v-for="(card, idx) in cards" :key="card">
+												<td scope="row" :class="'col-1 cell-container' + getTdClass(card, turn)" @click="!isEditCustomOrderMode ? changeAttackType(card, turn) : null"
+												data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="right" data-bs-html="true" 
+												:data-bs-content="isCardInBattle(card) && !isEditCustomOrderMode ? getBattleTurnRuleLogStr(card.name, turn) : ''">
+													<div class="turn-cell" v-if="isCardInBattle(card)">
+														<div v-if="isEditCustomOrderMode || hasCustomTurnActionOrder(turn)" class="dropdown d-inline-block">
+															<button class="btn btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+																<div v-if="isCardInBattle(card)" class="customOrder" :class="hasCustomTurnActionOrder(turn) ? '' : 'defaultOrder'">{{ getCardTurnActionOrder(turn, idx) }}</div>
+															</button>
+															<ul class="dropdown-menu">
+																<li v-for="order in 5">
+																	<a class="dropdown-item text-center" @click="setCardCustomTurnActionOrder(turn, idx, order)">{{ order }}</a>
+																</li>
+															</ul>
+														</div>
+														
+														<div class="text-content">{{ getBattleTurnValue(card.name, turn) }}</div>
+													</div>
+
+												</td>
+											</template>
+
+											<td v-if="userInput.isDisplayTurnTotal" scope="row" class="col-1">
+												{{ getBattleTeamTurnValue(turn) }}
+											</td>
+										</tr>
+									</template>
+								</tbody>
+								<tfoot v-if="battle != null">
+									<tr>
+										<th scope="row" class="col-md-1 summary">總計</th>
+										<template v-for="card in cards" :key="card">
+											<td scope="row" class="col-md-2 summary" >
+												<div v-if="isCardInBattle(card)">{{ getBattleTotalValue(card.name) }}</v-if>
+											</td>
+										</template>
+									</tr>
+									<tr>
+										<th scope="row" colspan="5" class="col-md-5 summary">{{ userInput.printOutputMode == 'All' ? '隊伍總傷害' : '隊伍總數值' }}</td>
+										<td scope="row" colspan="1" class="col-md-1 summary" >
+											<div v-if="battle != null">{{ getBattleTeamTotalValue() }}</v-if>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+
+					<div v-show="battle != null" >
+						<div class="form-group mb-3 col-lg-11">
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-damageChartMode1" value="none" v-model="setting.general.damageChartDisplay" />
+								<label class="form-check-label no-select" for="input-damageChartMode1">無圖表</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-damageChartMode5" value="teamTurnDamage" v-model="setting.general.damageChartDisplay" />
+								<label class="form-check-label no-select" for="input-damageChartMode5">隊伍回合輸出表</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-damageChartMode2" value="cardDamage" v-model="setting.general.damageChartDisplay" />
+								<label class="form-check-label no-select" for="input-damageChartMode2">個人輸出表</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-damageChartMode3" value="cardDamageTotal" v-model="setting.general.damageChartDisplay" />
+								<label class="form-check-label no-select" for="input-damageChartMode3">個人輸出累積表</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" id="input-damageChartMode4" value="damagePie" v-model="setting.general.damageChartDisplay" />
+								<label class="form-check-label no-select" for="input-damageChartMode4">輸出佔比圖</label>
+							</div>
+						</div>
+						<div v-show="setting.general.damageChartDisplay != 'none'" class="row justify-content-center mb-2" style="width: 100%; max-height:640px">
+							<canvas id="damageChart"></canvas>
+						</div>
+					</div>
+
+					<hr/>
+					<div class="row justify-content-center mb-2">
+						<span>角色資料 最後更新日期：{{ cardJsonLastModified }}</span>
+					</div>
+				</div>
+			</div>
+
+			<div v-if="tab == 'SORT'" class="row justify-content-center mb-2">
+				<div class="col-xs-12 col-md-12 col-lg-11">
+					<div class="filter-panel col w-100">
+						<div class="form-check-inline">
+							<label for="inputDefaultStar">預設星數</label>
+							<select id="inputDefaultStar" class="form-select" v-model="userInput.defaultStar">
+								<option v-for="(name, value) in DEFAULT_STAR" :value="value">{{ name }}</option>
+							</select>
+						</div>
+						<div class="py-1 row">
+							<div>等級</div>
+							<div class="col-3">
+								<input type="range" class="form-range" min="15" max="60" step="5" v-model="cardHpAtkSort.level">
+							</div>
+							<div class="col-1">{{cardHpAtkSort.level}}</div>
+							<div class="col-8"></div>
+						</div>
+						<div class="py-1">
+							<div>稀有度</div>
+							<template v-for="rarity in FILTERS.rarity">
+								<span>
+									<input type="checkbox" class="btn-check" name="cardHpAtkSort-rarity" autocomplete="off" :id="'cardHpAtkSort-'+rarity" :value="rarity" v-model="cardHpAtkSort.rarity">
+									<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardHpAtkSort-'+rarity">{{rarity}}</label>
+								</span>
+							</template>
+						</div>
+						<div class="py-1 cardFilter-clazz">
+							<div>定位</div>
+							<template v-for="clazz in FILTERS.clazz">
+								<span>
+									<input type="checkbox" class="btn-check" name="cardHpAtkSort-clazz" :id="'cardHpAtkSort-'+clazz" :value="clazz" v-model="cardHpAtkSort.clazz">
+									<label class="col-1 mx-2 w-auto" :for="'cardHpAtkSort-'+clazz" >
+										<img :src="getFilterPanalIconPath('class', clazz)"/>
+									</label>
+								</span>
+							</template>
+						</div>
+						<div class="py-1 cardFilter-element">
+							<div>屬性</div>
+							<template v-for="element in FILTERS.element">
+								<span>
+									<input type="checkbox" class="btn-check" name="cardHpAtkSort-element" :id="'cardHpAtkSort-'+element" :value="element" v-model="cardHpAtkSort.element">
+									<label class="col-1 mx-2 w-auto" :for="'cardHpAtkSort-'+element" >
+										<img :src="getFilterPanalIconPath('element', element)"/>
+									</label>
+								</span>
+							</template>
+						</div>
+						<div class="py-1">
+							<div>CD</div>
+							<template v-for="coolDown in FILTERS.coolDown">
+								<span>
+									<input type="checkbox" class="btn-check" name="cardHpAtkSort-coolDown" autocomplete="off" :id="'cardHpAtkSort-'+coolDown" :value="coolDown" v-model="cardHpAtkSort.coolDown">
+									<label class="btn btn-outline-primary col-1 mx-2 my-1 w-auto" :for="'cardHpAtkSort-'+coolDown">{{coolDown}}</label>
+								</span>
+							</template>
+						</div>
+						<div class="py-1 cardFilter-char" :class="this.cardHpAtkSort.charDisplayStyle">
+							<div>角色</div>
+							<template v-for="char in CHARACTERS">
+								<span v-if="char != ''" :class="'filter-'+getFilterPanelCode('char', char)" >
+									<template v-if="this.cardHpAtkSort.charDisplayStyle == 'pixel'">
+										<input type="checkbox" class="btn-check" name="cardHpAtkSort-character" :id="'cardHpAtkSort-'+char" :value="char" v-model="cardHpAtkSort.char">
+										<label class="col-1 mx-2 my-1 w-auto" :for="'cardHpAtkSort-'+char">
+											<img :src="getFilterPanalIconPath('char', char)"/>
+											{{char}}
+										</label>
+									</template>
+									<template v-if="this.cardHpAtkSort.charDisplayStyle == 'image'">
+										<input type="checkbox" class="btn-check" name="cardHpAtkSort-character" :id="'cardHpAtkSort-'+char" :value="char" v-model="cardHpAtkSort.char">
+										<label class="col-1 mx-2 my-1 w-auto" :for="'cardHpAtkSort-'+char">
+											<!-- <img :src="getFilterPanalIconPath('char', char)"/> -->
+											<span class="filter-icon-char-image" :class="'icon-'+getFilterPanelCode('char', char)"></span>
+										</label>
+									</template>
+									<template v-if="this.cardHpAtkSort.charDisplayStyle == 'text'">
+										<input type="checkbox" class="btn-check" name="cardHpAtkSort-character" :id="'cardHpAtkSort-'+char" :value="char" v-model="cardHpAtkSort.char">
+										<label class="btn mx-2 my-1 w-auto" :for="'cardHpAtkSort-'+char">
+											{{char}}
+										</label>
+									</template>
+								</span>
+							</template>
+						</div>
+						<div class="py-1">
+							<div>HP</div>
+							<div class="row">
+								<div class="col-1">
+									<input type="text" inputmode="numeric" class="form-control" v-model="cardHpAtkSort.hp.min" ></input>
+								</div>
+								~
+								<div class="col-1">
+									<input type="text" inputmode="numeric" class="form-control" v-model="cardHpAtkSort.hp.max" ></input>
+								</div>
+							</div>
+						</div>
+						<div class="py-1">
+							<div>ATK</div>
+							<div class="row">
+								<div class="col-1">
+									<input type="text" inputmode="numeric" class="form-control" v-model="cardHpAtkSort.atk.min" ></input>
+								</div>
+								~
+								<div class="col-1">
+									<input type="text" inputmode="numeric" class="form-control" v-model="cardHpAtkSort.atk.max" ></input>
+								</div>
+							</div>
+						</div>
+						<br/>
+						<div class="py-1">
+							<button type="button" class="btn btn-primary" @click="resetCardSort">全部重設</button>
+						</div>
+					</div>
+					<hr>
+					<div class="py-1">
+						<div>全體血量加成%</div>
+						<span>
+							<input type="text" inputmode="numeric" class="col-1 w-auto form-control" v-model="cardHpAtkSort.hpPercent" ></input>
+						</span>
+					</div>
+					<br />
+					<div class="row">
+						<h5>HP/ATK排行表（角色數量：{{getSortCards.length}}）</h5>
+
+						<div class="table-responsive" >
+							<table id="sortTable" class="table resultTable">
+								<tbody>
+									<tr class="table-header">
+										<th scope="col" class="col-1">
+											<div>排名</div>
+										</th>
+										<th scope="col" class="col-1">
+											<div>卡片</div>
+										</th>
+										<th scope="col" class="col-2 d-none d-sm-table-cell">
+											<div>簡稱</div>
+										</th>
+										<th scope="col" class="col-2" @click="sortTableSort('atk')">
+											<span>ATK</span>
+											<i v-show="cardHpAtkSort.sortBy=='atk'" class="fa-solid" :class="cardHpAtkSort.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+										</th>
+										<th scope="col" class="col-2" @click="sortTableSort('hp')">
+											<span>HP</span>
+											<i v-show="cardHpAtkSort.sortBy=='hp'" class="fa-solid" :class="cardHpAtkSort.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+										</th>
+										<th scope="col" class="col-2 d-none d-sm-table-cell">
+											<span>HP加成（僅限單人）</span>
+										</th>
+										<th scope="col" class="col-2" @click="sortTableSort('actualHp')">
+											<span>實戰HP</span>
+											<i v-show="cardHpAtkSort.sortBy=='actualHp'" class="fa-solid" :class="cardHpAtkSort.sortMode=='asc' ? 'fa-arrow-down-short-wide' : 'fa-arrow-up-wide-short'"></i>
+										</th>
+									</tr>
+									<template v-for="(card, idx) in getSortCards">
+										<tr>
+											<td class="col-1">{{idx+1}}</td>
+											<td class="card-cell col-1">
+												<div class="card-block normal">
+													<div class="card-image-div">
+														<img :src="getCardImagePath(card)" @error="loadNoCardImage" class="card-image">
+														<img :src="getCardIconPath(card, 'element')" class="card-icon-element" />
+														<img :src="getCardIconPath(card, 'class')" class="card-icon-class" />
+														<div class="card-icon-star-container">
+															<template v-for="star in card.star">
+																<img :src="getCardIconPath(card, 'star')" class="card-icon-star" />
+															</template>
+														</div>
+														<img :src="getCardIconPath(card, 'rarity')" class="card-icon-rarity" />
+													</div>
+												</div>
+											</td>
+											<td class="col-2 d-none d-sm-table-cell">{{card.name}}</td>
+											<td class="col-2">{{card.getAtk()}}</td>
+											<td class="col-2">{{card.getHp()}}</td>
+											<td class="col-2 d-none d-sm-table-cell">{{Number(card.getSelfHpUp()) + Number(cardHpAtkSort.hpPercent)}}%</td>
+											<td class="col-2">{{card.getActualHp(cardHpAtkSort.hpPercent)}}</td>
+										</tr>
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div v-if="tab == 'JSON'" class="row justify-content-center mb-2">
+				<div class="col-xs-12 col-md-12 col-lg-11">
+					<div class="row">
+						<h5>匯入角色JSON</h5>
+
+						<div class="row">
+							<div class="col-md-9 row mb-2 mt-2">
+								<textarea rows="10" v-model="inputJson"></textarea>
+							</div>
+							<div class="col-md-9 row mb-2 mt-2">
+								<button type="button" class="btn btn-primary" @click="importJsonStr(false)">匯入隊友</button>
+							</div>
+							<div class="col-md-9 row mb-2 mt-2">
+								<button type="button" class="btn btn-danger" @click="importJsonStr(true)">匯入敵人</button>
+							</div>
+							
+							<div v-if="importJsonResult.length > 0" class="col-md-9 row mb-2 mt-2 alert alert-info">{{ importJsonResult }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div v-if="tab == 'SETTING'" class="row justify-content-center mb-2">
+				<div class="col-xs-12 col-md-12 col-lg-11">
+					<div class="container">
+						<div class="alert alert-info" role="info">
+							以下設定會儲存到瀏覽器的LocalStorage內
+						</div>
+						<h5>預設選項</h5>
+						<div class="row py-2">
+							<label class="col-3">回合數</label>
+							<input type="text" inputmode="numeric" class="col-auto form-control w-auto" v-model="setting.userInput.turns" ></input>
+						</div>
+						<div class="row py-2">
+							<label class="col-3">顯示回合</label>
+							<div class="form-check form-switch col-auto">
+								<input class="form-check-input d-inline-block" type="checkbox" :checked="setting.userInput.isShowTurns" v-model="setting.userInput.isShowTurns">
+							</div>
+						</div>
+						<div class="row py-2">
+							<label class="col-3">角色星數</label>
+							<select class="form-select col-auto w-auto" v-model="setting.userInput.defaultStar">
+								<option v-for="(name, value) in DEFAULT_STAR" :value="value">{{ name }}</option>
+							</select>
+						</div>
+						<div class="row py-2">
+							<label class="col-3">顯示回合輸出</label>
+							<div class="form-check form-switch col-auto">
+								<input class="form-check-input d-inline-block" type="checkbox" :checked="setting.userInput.isDisplayTurnTotal" v-model="setting.userInput.isDisplayTurnTotal">
+							</div>
+						</div>
+						<div class="row py-2">
+							<label class="col-3">計算敵方易傷</label>
+							<div class="form-check form-switch col-auto">
+								<input class="form-check-input d-inline-block" type="checkbox" :checked="setting.userInput.isCalcEnemyDebuff" v-model="setting.userInput.isCalcEnemyDebuff">
+							</div>
+						</div>
+						<div class="row py-2">
+							<label class="col-3">反擊次數</label>
+							<input type="text" inputmode="numeric" class="col-auto form-control w-auto" v-model="setting.userInput.maxCounterAttack" ></input>
+						</div>
+
+						<h5>外觀設定</h5>
+						<div class="row py-2">
+							<label class="col-3">選擇器：過濾條件 > 角色</label>
+							<select class="form-select col-auto w-auto" v-model="setting.general.charFilterDisplayStyle">
+								<option value="text">文字按鍵</option>
+								<option value="image">角色圖像</option>
+								<option value="pixel">像素+文字</option>
+							</select>
+						</div>
+						<div class="row py-2">
+							<label class="col-3">隊伍記錄：角色圖大小</label>
+							<select class="form-select col-auto w-auto" v-model="setting.general.recordPanelCardImgSize">
+								<option value="big">較大</option>
+								<option value="normal">一般</option>
+								<option value="small">較小</option>
+								<option value="none">無</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div v-if="tab == 'LOGS'" class="row justify-content-center mb-2">
+				<div class="col-xs-12 col-md-12 col-lg-11">
+					<div class="row">
+						<h5>卡片修正</h5>
+
+						<textarea rows="8">
+[20250730]
+修正卡片資料：女僕啖天技能－治療屬於「觸發技」
+
+
+[20250702]
+修正卡片資料：修布5星被動－修正普攻追擊20%
+修正回合Log裡部份增傷/易傷的缺少/重複顯示
+
+
+[20250405]
+修正卡片資料：春玖潛12被動－被動是免疫麻痺
+
+
+[20250325]
+修正卡片資料：刃歛5星被動－被動是HP增加34%
+
+
+[20250124]
+修正卡片資料：刃歛3星被動－攻擊力增加倍率是12%
+刃崑技能－技能增傷的倍率是22%
+
+
+[20250116]
+修正卡片資料：沙副潛力類型－平均型
+
+
+[20250112]
+修正卡片資料：常布的Lv 1和Lv 2技能－倍率是204%和238%
+
+
+[20241123]
+修正卡片資料：補充夕可的技能－全體減傷10%（搜尋、記錄用）
+
+
+[20241109]
+修正公式：改用Math.fround()進行傷害計算（32-bit float）
+公式有輕微調整
+
+
+[20241102]
+修正整體HP/ATK：部份HP/ATK數值在一般計算下會產生少許偏差
+改用Math.fround()計算HP/ATK（32-bit float）
+例：一般64bit計算下，3星滿潛銀伊的ATK是5613，32bit計算下是5612（遊戲數值是5612）
+
+修正追擊和觸發行動順序錯誤問題
+
+修正卡片資料：煙八的Lv 3技能－倍率是533%
+修正卡片資料：火狐3星－倍率是27%
+修正卡片資料：偵布Lv 3技能－易傷是27%
+修正卡片資料：SR艾斯特、SR艾德蒙特、SR奧的潛力類型修正
+
+
+[20241025]
+修正卡片資料：夏啖的5星被動－修正正確發揮作用
+
+[20240808]
+修正卡片資料：SR八雲－潛力類型是平均型
+
+[20240808]
+修正卡片資料：星布的3星被動－第一回合減CD，以及技能多了「全體造成傷害增加34%」
+
+[20240804]
+修正：星布的「不可疊加」機制
+修正卡片資料：N/R/SR啖天的普攻－倍率是100%
+
+[20240802]
+修正卡片資料：星布的3星被動－倍率是12%
+
+[20240705]
+修正卡片資料：海崑的3星被動－持續回合數是1回合
+修正：「攻擊時」「普攻時」「必殺時」在整個行動結束時才會發動（例：海崑必殺技中的2次攻擊並不會即時觸發「必殺時」條件，後續必殺攻擊不應獲得12%增傷）
+
+[20240704]
+修正卡片資料：雨崑必殺技的37.5%必殺加成－要排除雨崑自己
+
+[20240606]
+修正卡片資料：沙玖Lv 3技能－倍率是345%
+
+[20240427]
+修正卡片資料：魔伊5星被動－攻擊力加成是6%
+
+[20240414]
+修正：「使目標受觸發技傷害增加」乘區錯誤（應該與「使目標受必殺技傷害增加」為同一乘區）
+修正：觸發技不能觸發觸發技（例：獄副的觸發技傷害無法觸發鍍副的易傷加成）
+修正：幽八的技能反擊－只能以基礎攻擊力來反擊
+
+[20240407]
+修正卡片資料：常駐玖夜－他是妨礙角
+
+[20240402]
+修正卡片資料：月玖3星被動－對妨礙的攻擊力加成是12%
+
+[20240331]
+修正：R/N卡潛3時被動並未計算
+
+[20240225]
+修正毒傷計算公式：不應該算入「我方造成傷害增加」
+修正夏啖的ATK/HP數值
+修正血啖的技能順序
+						</textarea>
+						<hr>
+
+						<h5>功能更新</h5>
+
+						<textarea rows="8">
+[20250802]
+全員快速設定功能：可以快速設定隊伍全員的潛力和行動模式
+UI更新：基本設定、隊伍設定、全員快速設定改成折疊型
+
+							
+[20250727]
+自訂行動順序功能：在更多功能裡，可以自訂各回合的順序，並且有自動更新順序的功能
+
+							
+[20250518]
+限制等級功能：可以直接限制隊伍等級（適用於高難關卡）
+
+
+[20250323]
+排行表：卡片的HP、ATK排行表
+修正：N卡數值計算錯誤（HP/ATK公式計算了不應存在的蜜話）
+
+
+[20241123]
+增加顯示回合總輸出的功能
+
+
+[20241109]
+追加卡片的破防及減傷的資料（記錄、搜尋用）
+
+[20241021]
+網址功能：提供複製網址功能，並利用網址queryString直接觀看隊伍
+
+[20241013]
+修正：選擇能補血的敵人後，降療技能可以發揮實戰作用
+
+[20241001]
+實戰HP功能：顯示實戰的最大HP與HP加成
+修正：敵人鎖血的回合
+
+[20240915]
+選擇敵人功能：可以自訂敵人及選擇敵人
+僅支援簡單功能，例：敵人的血量、屬性、第n回合的降攻/減傷能力、補血
+尚未支援/不支援：敵人的護盾、吸血、完善的鎖血機制等等
+
+
+[20240820]
+截圖功能：可以截取數值表格圖片到剪貼簿
+增加行動順序標誌旗子
+
+		
+[20240705]
+更正「攻擊時」「必殺時」「普攻時」條件觸發的順序
+改善血量條件：可以選擇允許、不允許或按照角色血量執行
+
+[20240511]
+修正條件部份程式錯誤導致計算數值出錯
+
+[20240501] - v2.3
+新增功能：傷害圖表
+
+
+[20240415]
+新增功能：行動模式追加「暴力設置（無視CD）」（適合銀伊／魔伊隊伍手動調整）
+
+
+[20240405]
+新增功能：切換主題
+新增功能：隊伍傷害記錄的「全部刪除」
+修正：隊伍傷害記錄－新增隊伍／匯入記錄時無法更新現有記錄
+
+
+[20240402]
+修正buff記錄功能：
+．修正3星/5星被動的原主顯示
+．角色防禦回合的反擊／毒傷可正確顯示相關buff
+．修正沙副+補師的buff重複記錄問題
+．反擊及追擊改為以「反擊」及「普攻追擊」標示
+效能修正：避免UI重複計算
+
+
+[20240331]
+新增功能：卡片可以直接拖曳
+新增功能：選擇角色－加上能力過濾
+新增功能：選擇角色－加上 AND / OR
+修正：選擇角色版面在點擊過濾後會歪掉
+效能修正：點擊「隊伍記錄」才會載入記錄
+
+
+[20240317]
+新增功能：隊伍記錄－簡單的匯入匯出
+修正：加入隊伍的UI提示
+修正：當記錄中已經有相同的回合數+隊伍+行動模式，按「新增」只會更改隊伍記錄
+修正：卡片未上場時無法新增隊伍記錄
+
+
+[20240301]
+修正：載入隊伍後，無法載入手動設置的每回合行動
+修正：行動模式換成「手動設置」時，不應該清空其他隊員的手動行動設置
+
+
+[20240228]
+新增功能：追加「隊伍傷害記錄」
+可以記錄：回合數、隊伍卡片、星數、行動順序、回合行動、當前輸出數值
+不會記錄：潛力、手動輸入數值、易傷、敵方屬性、反擊次數、不同類型顯示的輸出數值
+沒有重新計算數值的功能。當程式或資料有bug、官方更新數值，傷害記錄中的數值不會自動修正
+
+
+[20240225]
+新增功能：追加「設定」
+
+
+[20240223] - v2.1
+UI變動：追加角色篩選器功能，追加角色圖片
+追加角色資料顯示（實驗性，從資料、功能的各方面都未完善，僅供簡單核對資料倍率）
+						</textarea>
+						<hr>
+
+						<h5>已知問題，有時間才會修正</h5>
+
+						<div class="row">
+							<ul>
+								<li>回合記錄錯誤：氣泡提示的記錄內容有時候會重複或缺少buff（但實際計算數值正確）</li>
+								<li>效能問題：當「隊伍記錄」越來越多，速度會變慢</li>
+							</ul>
+						</div>
+						<hr>
+
+						<h5>已知問題，但應該不會修正（Very low priority）</h5>
+
+						<div class="row">
+							<ul>
+								<li>現時沒有處理「被攻擊時」「被治療時」，條件會以「每n回合」「第n回合」來取代</li>
+								<li>選擇顯示「補量」時，聖崑、錆布等以HP進行治療的仍然會顯示攻擊力相關buff tooltips</li>
+							</ul>
+						</div>
+						<hr>
+
+						<h5>匯報BUGS</h5>
+						<div>請至 <a href="https://www.plurk.com/p/phlbsg">噗浪偷偷說</a> </div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="module" src="./res/js/uiMain.js"></script>
+
+	
+</body>
+
 </html>
