@@ -1,0 +1,151 @@
+name: Sync upstream branches
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every Monday at 06:00 Asia/Shanghai (Sunday 22:00 UTC).
+    - cron: "0 22 * * 0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream-branches
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPOSITORY: linecross/nuCarnivalAttackCalculator
+
+jobs:
+  sync:
+    name: Sync branches
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the fork
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        shell: bash
+        run: |
+          set -euo pipefail
+          git remote add upstream "https://github.com/${UPSTREAM_REPOSITORY}.git"
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          git fetch --prune upstream '+refs/heads/*:refs/remotes/upstream/*'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge upstream master while preserving this workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout -B master origin/master
+
+          if git merge-base --is-ancestor upstream/master HEAD; then
+            echo "master already contains the latest upstream changes."
+            exit 0
+          fi
+
+          git merge --no-edit upstream/master
+          git push origin HEAD:refs/heads/master
+
+      - name: Fast-forward ordinary upstream branches
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+
+          while IFS= read -r branch; do
+            case "$branch" in
+              master|gh-pages) continue ;;
+            esac
+
+            upstream_ref="refs/remotes/upstream/$branch"
+            fork_ref="refs/remotes/origin/$branch"
+
+            if ! git show-ref --verify --quiet "$fork_ref"; then
+              echo "Creating $branch from upstream."
+              git push origin "$upstream_ref:refs/heads/$branch"
+            elif git merge-base --is-ancestor "$fork_ref" "$upstream_ref"; then
+              echo "Fast-forwarding $branch."
+              git push origin "$upstream_ref:refs/heads/$branch"
+            elif git merge-base --is-ancestor "$upstream_ref" "$fork_ref"; then
+              echo "$branch already contains the latest upstream changes."
+            else
+              echo "::error::Branch $branch has diverged from upstream and was left unchanged."
+              failed=1
+            fi
+          done < <(git for-each-ref --format='%(refname:strip=3)' refs/remotes/upstream)
+
+          exit "$failed"
+
+      - name: Merge upstream gh-pages while preserving the fork entry point
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout -B gh-pages origin/gh-pages
+
+          if git merge-base --is-ancestor upstream/gh-pages HEAD; then
+            echo "gh-pages already contains the latest upstream changes."
+            exit 0
+          fi
+
+          merge_base="$(git merge-base HEAD upstream/gh-pages)"
+
+          set +e
+          git merge --no-commit --no-ff upstream/gh-pages
+          merge_status=$?
+          set -e
+
+          if [ "$merge_status" -ne 0 ]; then
+            conflicts="$(git diff --name-only --diff-filter=U)"
+            if [ "$conflicts" != "Main.html" ]; then
+              echo "::error::gh-pages has conflicts that cannot be resolved safely:"
+              printf '%s\n' "$conflicts"
+              exit 1
+            fi
+
+            temp_dir="$(mktemp -d)"
+            trap 'rm -rf "$temp_dir"' EXIT
+
+            if ! git cat-file -e "$merge_base:Main.html" \
+              || ! git cat-file -e "HEAD:index.html" \
+              || ! git cat-file -e "upstream/gh-pages:Main.html"; then
+              echo "::error::The expected Main.html to index.html structure has changed."
+              exit 1
+            fi
+
+            git show "$merge_base:Main.html" > "$temp_dir/base.html"
+            git show "HEAD:index.html" > "$temp_dir/fork.html"
+            git show "upstream/gh-pages:Main.html" > "$temp_dir/upstream.html"
+
+            set +e
+            git merge-file -p \
+              "$temp_dir/fork.html" \
+              "$temp_dir/base.html" \
+              "$temp_dir/upstream.html" > "$temp_dir/merged.html"
+            entry_merge_status=$?
+            set -e
+
+            if [ "$entry_merge_status" -ne 0 ]; then
+              echo "::error::Upstream and fork both changed the same part of the page entry point."
+              exit 1
+            fi
+
+            mv "$temp_dir/merged.html" index.html
+            git rm -f Main.html
+            git add index.html
+          fi
+
+          if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+            echo "::error::Unresolved gh-pages conflicts remain."
+            git diff --name-only --diff-filter=U
+            exit 1
+          fi
+
+          git commit -m "Merge upstream gh-pages"
+          git push origin HEAD:refs/heads/gh-pages
