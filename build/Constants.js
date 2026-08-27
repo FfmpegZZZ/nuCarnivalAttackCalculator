@@ -63,6 +63,7 @@ export const RuleType = {
     getShield: '獲得護盾',
     shieldState: '護盾',
     guardMode: '防禦狀態',
+    clearRule: '清除規則', // Clear specified rule by Rule.uniqueName
     // 不會在計算機生效的被動（純記錄）
     takeLessDamage: '受到傷害減少',
     takeLessBasicDamage: '受到普攻傷害減少',
@@ -74,9 +75,11 @@ export const RuleType = {
     enemyLessBasicDamage: '敵方普攻傷害減少',
     enemyLessSkillDamage: '敵方必殺技傷害減少',
     enemyRemoveGuard: '解除防禦',
+    attackToSelf: '自身傷害',
+    poisonToSelf: '自身毒傷',
     immuneParalysis: '免疫麻痺',
     immuneSleep: '免疫睡眠',
-    immuneSilence: '免疫沈默'
+    immuneSilence: '免疫沉默'
 };
 export const RuleValueByType = { atk: 'ATK', hp: 'HP', baseAtk: '基礎攻擊力', exactVal: '絕對數值', exactHp: '絕對HP', exactAtk: '絕對ATK' };
 export const AttackType = { BasicAttack: '普攻', SkillAttack: '必殺技', Guard: '防禦', None: 'NONE' };
@@ -93,6 +96,7 @@ export const ConditionType = {
     isAttack: '攻擊時',
     everyTurn: '每n回合',
     atTurn: '第n回合',
+    hasRule: '已獲得規則',
     hasPhase: '階段',
     // 敵方專用
     enemyIsAttacked: '被攻擊時',
@@ -104,9 +108,11 @@ export const ConditionType = {
 export const TargetType = {
     self: '自己',
     all: '全體',
+    enemy: '敵人',
     isClass: '定位',
     isChar: '角色',
     isPosition: '位置',
+    isElement: '屬性',
 };
 export const SkillType = {
     none: 'N/A',

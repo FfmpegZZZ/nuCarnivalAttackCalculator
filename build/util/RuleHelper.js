@@ -11,7 +11,7 @@ export class RuleHelper {
     }
     static isRuleExceedMaxCount(rule, rules) {
         if (rule.turn == Rule.ALWAYS_EFFECTIVE || rule.maxCount != null) {
-            var currentCount = rules.filter(r => r.id == rule.id).length;
+            const currentCount = rules.filter(r => r.id == rule.id).length;
             if (currentCount < rule.getMaxCount()) {
                 return false;
             }
@@ -31,14 +31,30 @@ export class RuleHelper {
         return rules.filter(e => e.type == ruleType).length > 0;
     }
     static getBuffTotalValue(rules, ruleType) {
-        var targetRules = rules.filter(e => e.type == ruleType);
+        const targetRules = rules.filter(e => e.type == ruleType);
         if (targetRules.length == 0)
             return 0;
-        var result = new Float32(0);
-        for (var r of targetRules) {
+        let result = new Float32(0);
+        for (const r of targetRules) {
             result.add(Util.getFloat32(r.value));
         }
         return result.getValue();
+    }
+    static getRuleByUniqueName(rules, uniqueName) {
+        for (const r of rules) {
+            if (r.uniqueName == uniqueName) {
+                return r;
+            }
+        }
+        return null;
+    }
+    static isRulesHaveAllUniqueNames(rules, uniqueNames) {
+        for (const uniqueName of uniqueNames) {
+            if (!rules.some(r => r.uniqueName == uniqueName)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 //# sourceMappingURL=RuleHelper.js.map
